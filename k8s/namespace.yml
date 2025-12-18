@@ -1,0 +1,9 @@
+
+# Source: jamia/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jamia-form
+  labels:
+    name: jamia-form
+    app: jamia-form 
