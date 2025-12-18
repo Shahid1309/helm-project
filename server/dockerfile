@@ -1,31 +1,20 @@
-# ---------- Build Stage ----------
-FROM node:22-alpine AS builder
+# Use Node.js LTS
+FROM node:20
 
+# Set working directory
 WORKDIR /app
 
-# Copy only package files first
+# Copy package files
 COPY package*.json ./
 
-# Install ALL deps (including dev)
+# Install dependencies
 RUN npm install
 
-# Copy rest of the code
+# Copy entire project
 COPY . .
 
-# Build (if you have build step — TS etc.)
+# Expose backend port
+EXPOSE 5050
 
-
-# ---------- Production Stage ----------
-FROM node:22-alpine AS runner
-
-WORKDIR /app
-
-# Copy only required files to production
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-
-
-EXPOSE 5500
-
-# Only run the built code
-CMD ["node", "dist/index.js"]
+# Start the server
+CMD ["node", "index.js"]
