@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose backend port
-EXPOSE 5050
+EXPOSE 5500
 
 # Start the server
 CMD ["node", "index.js"]
