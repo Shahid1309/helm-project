@@ -44,18 +44,34 @@ export default function AllFeedbackPage() {
     "Did the teacher create a positive, respectful, and motivating atmosphere?"
   ];
 
-  const fetchFeedback = async () => {
-    try {
-      const res = await fetch("http://myapp-backend:5500/getfeedback");
-      const data = await res.json();
-      setFeedback(data.feedbackList || []);
-      setFilteredFeedback(data.feedbackList || []);
-    } catch (error) {
-      console.error("Error fetching feedback:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchFeedback = async () => {
+  //   try {
+  //     const res = await fetch("http://myapp-backend:5500/getfeedback");
+  //     const data = await res.json();
+  //     setFeedback(data.feedbackList || []);
+  //     setFilteredFeedback(data.feedbackList || []);
+  //   } catch (error) {
+  //     console.error("Error fetching feedback:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const fetchFeedback = async () => {
+  try {
+    const res = await fetch(`${API_URL}/getfeedback`);
+    const data = await res.json();
+    setFeedback(data.feedbackList || []);
+    setFilteredFeedback(data.feedbackList || []);
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchFeedback();

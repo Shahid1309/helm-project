@@ -54,9 +54,9 @@ export default function FeedbackForm() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const res = await fetch("http://myapp-backend:5500/addfeedback", {
+      const res = await fetch(`${API_URL}/addfeedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
