@@ -46,7 +46,7 @@ export default function AllFeedbackPage() {
 
   const fetchFeedback = async () => {
     try {
-      const res = await fetch("http://localhost:5500/getfeedback");
+      const res = await fetch("http://myapp-backend:5500/getfeedback");
       const data = await res.json();
       setFeedback(data.feedbackList || []);
       setFilteredFeedback(data.feedbackList || []);

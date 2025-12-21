@@ -56,7 +56,7 @@ export default function FeedbackForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5500/addfeedback", {
+      const res = await fetch("http://myapp-backend:5500/addfeedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
