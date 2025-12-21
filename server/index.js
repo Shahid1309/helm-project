@@ -96,10 +96,8 @@ app.use(express.json());
 // ----------------------
 // 🔗 MongoDB Connection
 // ----------------------
-const MONGO_URL ="mongodb+srv://shahiid1309_db_user:C1Na5UCsgDyEkQbX@cluster0.tbsedbm.mongodb.net/studentDB?retryWrites=true&w=majority&appName=Cluster0";
-
 mongoose
-  .connect(MONGO_URL)
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Error:", err));
 
