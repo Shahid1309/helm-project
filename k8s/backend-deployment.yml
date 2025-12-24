@@ -1,8 +1,32 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: backend-deployment
+#   namespace: jamia-form
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: backend
+#   template:
+#     metadata:
+#       name: backend-pod
+#       namespace: jamia-form
+#       labels:
+#         app: backend
+#     spec:
+#       containers:
+#         - name: backend
+#           image: codewithshahid/form-backend
+#           ports:
+#             - containerPort: 5500
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
-  namespace: jamia-form
+  name: backend
+  namespace: jamia
 spec:
   replicas: 1
   selector:
@@ -10,13 +34,24 @@ spec:
       app: backend
   template:
     metadata:
-      name: backend-pod
-      namespace: jamia-form
       labels:
         app: backend
     spec:
       containers:
         - name: backend
-          image: codewithshahid/form-backend
+          image: backend:v1
           ports:
             - containerPort: 5500
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: jamia
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+    - port: 5500
+      targetPort: 5500

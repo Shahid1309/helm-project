@@ -56,7 +56,7 @@ export default function FeedbackForm() {
     setLoading(true);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const res = await fetch(`${API_URL}/addfeedback`, {
+      const res = await fetch(`/api/addfeedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

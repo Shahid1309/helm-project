@@ -1,8 +1,32 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: frontend-deployment
+#   namespace: jamia-form
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: frontend
+#   template:
+#     metadata:
+#       name: frontend-pod
+#       namespace: jamia-form
+#       labels:
+#         app: frontend
+#     spec:
+#       containers:
+#         - name: frontend
+#           image: codewithshahid/form-frontend
+#           ports:
+#             - containerPort: 3000
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
-  namespace: jamia-form
+  name: frontend
+  namespace: jamia
 spec:
   replicas: 1
   selector:
@@ -10,13 +34,11 @@ spec:
       app: frontend
   template:
     metadata:
-      name: frontend-pod
-      namespace: jamia-form
       labels:
         app: frontend
     spec:
       containers:
         - name: frontend
-          image: codewithshahid/form-frontend
+          image: frontend:v1
           ports:
             - containerPort: 3000
