@@ -226,7 +226,7 @@ export default function FeedbackForm() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-center mb-2">
-            Student Feedback Form
+            Student Feedback Form Jamia Millia Islamia Students
           </h1>
           <p className="text-center text-blue-100 text-lg">
             Share your experience and help us improve

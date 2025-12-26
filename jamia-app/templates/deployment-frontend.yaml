@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:
@@ -15,9 +14,9 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: {{ .Values.frontend.image }}:{{ .Values.frontend.tag }}
+          image: {{ .Values.frontend.image }}
           ports:
             - containerPort: {{ .Values.frontend.port }}
           env:
             - name: NEXT_PUBLIC_API_URL
-              value: {{ .Values.frontend.apiUrl }}
+              value: "http://backend:5500"
