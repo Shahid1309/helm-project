@@ -6,7 +6,7 @@ pipeline {
     DOCKER_USER = "${DOCKERHUB_CREDENTIALS_USR}"
     DOCKER_PASS = "${DOCKERHUB_CREDENTIALS_PSW}"
 
-    IMAGE_BACKEND = "codewithshahid/backend"
+    IMAGE_BACKEND  = "codewithshahid/backend"
     IMAGE_FRONTEND = "codewithshahid/frontend"
   }
 
@@ -40,25 +40,21 @@ pipeline {
 
     stage('Deploy to Kubernetes using Helm') {
       steps {
-        withCredentials([string(credentialsId: 'kubeconfig', variable: 'KCFG')]) {
+        withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KCFG')]) {
           sh """
-# Write kubeconfig (VERY important to use double quotes here)
-cat > kubeconfig <<'EOF'
-${KCFG}
-EOF
+            export KUBECONFIG=$KCFG
 
-export KUBECONFIG=\$PWD/kubeconfig
+            echo '🔍 Checking cluster access...'
+            kubectl get nodes
 
-echo '🔍 Checking cluster access...'
-kubectl get nodes
-
-echo '🚀 Deploying using Helm...'
-helm upgrade --install myapp . \
-  --set backend.image=$IMAGE_BACKEND:latest \
-  --set frontend.image=$IMAGE_FRONTEND:latest
+            echo '🚀 Deploying using Helm...'
+            helm upgrade --install myapp . \
+              --set backend.image=$IMAGE_BACKEND:latest \
+              --set frontend.image=$IMAGE_FRONTEND:latest
           """
         }
       }
     }
+
   }
 }
