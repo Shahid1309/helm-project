@@ -6,7 +6,7 @@ pipeline {
     DOCKER_USER = "${DOCKERHUB_CREDENTIALS_USR}"
     DOCKER_PASS = "${DOCKERHUB_CREDENTIALS_PSW}"
 
-    IMAGE_BACKEND  = "codewithshahid/backend"
+    IMAGE_BACKEND = "codewithshahid/backend"
     IMAGE_FRONTEND = "codewithshahid/frontend"
   }
 
@@ -21,8 +21,13 @@ pipeline {
     stage('Build Backend Image') {
       steps {
         sh """
+          echo '🔐 Logging into Docker Hub'
           docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+          echo '🐳 Building Backend Image'
           docker build -t $IMAGE_BACKEND:latest ./server
+
+          echo '📤 Pushing Backend Image'
           docker push $IMAGE_BACKEND:latest
         """
       }
@@ -31,8 +36,13 @@ pipeline {
     stage('Build Frontend Image') {
       steps {
         sh """
+          echo '🔐 Logging into Docker Hub'
           docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+          echo '🐳 Building Frontend Image'
           docker build -t $IMAGE_FRONTEND:latest ./client
+
+          echo '📤 Pushing Frontend Image'
           docker push $IMAGE_FRONTEND:latest
         """
       }
@@ -40,6 +50,7 @@ pipeline {
 
     stage('Deploy to Kubernetes using Helm') {
       steps {
+        // IMPORTANT: kubeconfig stored as Secret File with ID = kubeconfig-file
         withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KCFG')]) {
           sh """
             export KUBECONFIG=$KCFG
@@ -47,14 +58,13 @@ pipeline {
             echo '🔍 Checking cluster access...'
             kubectl get nodes
 
-            echo '🚀 Deploying using Helm...'
-            helm upgrade --install myapp . \
+            echo '🚀 Deploying with Helm...'
+            helm upgrade --install myapp ./myapp \
               --set backend.image=$IMAGE_BACKEND:latest \
               --set frontend.image=$IMAGE_FRONTEND:latest
           """
         }
       }
     }
-
   }
 }
