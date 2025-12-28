@@ -40,14 +40,19 @@ pipeline {
         stage('Deploy to Kubernetes using Helm') {
             steps {
                 withCredentials([string(credentialsId: 'kubeconfig', variable: 'KCFG')]) {
-                    sh """
-                    echo "$KCFG" > kubeconfig
-                    export KUBECONFIG=kubeconfig
+                    sh '''
+cat > kubeconfig <<EOF
+${KCFG}
+EOF
 
-                    helm upgrade --install two-tier-app ./helm-chart-folder \
-                        --set backend.image=$IMAGE_BACKEND:latest \
-                        --set frontend.image=$IMAGE_FRONTEND:latest
-                    """
+export KUBECONFIG=$PWD/kubeconfig
+
+kubectl get nodes
+
+helm upgrade --install two-tier-app ./myapp \
+  --set backend.image=codewithshahid/backend:latest \
+  --set frontend.image=codewithshahid/frontend:latest
+                    '''
                 }
             }
         }
