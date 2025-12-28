@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = 'codewithshahid'
-        FRONTEND_IMAGE = "$DOCKERHUB_USER/frontend:v2"
-        BACKEND_IMAGE  = "$DOCKERHUB_USER/backend:v2"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        DOCKER_USER = "${DOCKERHUB_CREDENTIALS_USR}"
+        DOCKER_PASS = "${DOCKERHUB_CREDENTIALS_PSW}"
+        IMAGE_BACKEND = "codewithshahid/backend"
+        IMAGE_FRONTEND = "codewithshahid/frontend"
     }
 
     stages {
@@ -15,39 +17,36 @@ pipeline {
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Build Backend Image') {
             steps {
                 sh """
-                  docker build -t ${FRONTEND_IMAGE} ./client
-                  docker build -t ${BACKEND_IMAGE} ./server
+                docker login -u $DOCKER_USER -p $DOCKER_PASS
+                docker build -t $IMAGE_BACKEND:latest ./server
+                docker push $IMAGE_BACKEND:latest
                 """
             }
         }
 
-        stage('Login & Push Images') {
+        stage('Build Frontend Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'two-tier-app-cicd-token',
-                    usernameVariable: 'USER',
-                    passwordVariable: 'PASS'
-                )]) {
-                    sh """
-                      echo $PASS | docker login -u $USER --password-stdin
-                      docker push ${FRONTEND_IMAGE}
-                      docker push ${BACKEND_IMAGE}
-                    """
-                }
+                sh """
+                docker login -u $DOCKER_USER -p $DOCKER_PASS
+                docker build -t $IMAGE_FRONTEND:latest ./client
+                docker push $IMAGE_FRONTEND:latest
+                """
             }
         }
 
-        stage('Deploy using Helm') {
+        stage('Deploy to Kubernetes using Helm') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
+                withCredentials([string(credentialsId: 'kubeconfig', variable: 'KCFG')]) {
                     sh """
-                      export KUBECONFIG=$KUBECONFIG_FILE
-                      helm upgrade --install two-tier-app ./jamia-app \
-                        --set frontend.image=${FRONTEND_IMAGE} \
-                        --set backend.image=${BACKEND_IMAGE}
+                    echo "$KCFG" > kubeconfig
+                    export KUBECONFIG=kubeconfig
+
+                    helm upgrade --install two-tier-app ./helm-chart-folder \
+                        --set backend.image=$IMAGE_BACKEND:latest \
+                        --set frontend.image=$IMAGE_FRONTEND:latest
                     """
                 }
             }

@@ -229,7 +229,7 @@ export default function FeedbackForm() {
             Student Feedback Form Jamia Millia Islamia Students
           </h1>
           <p className="text-center text-blue-100 text-lg">
-            Share your experience and help us improve
+            Share your ida experience and help us improve
           </p>
         </div>
 
